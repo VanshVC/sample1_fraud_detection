@@ -14,9 +14,9 @@ RANDOM_STATE = 42
 np.random.seed(RANDOM_STATE)
 random.seed(RANDOM_STATE)
 
-BASE_DIR = r"c:\Users\vansh\Downloads\Fraud_Detection"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(BASE_DIR, "data")
-MODELS_DIR = os.path.join(BASE_DIR, "models")
+MODELS_DIR = os.path.join(BASE_DIR, "backend", "models")
 
 # Ensure directories exist
 os.makedirs(DATA_DIR, exist_ok=True)

@@ -10,21 +10,24 @@ from fastapi import Request, Response
 
 @app.middleware("http")
 async def add_cors_private_network_header(request: Request, call_next):
-    if request.method == "OPTIONS" and "access-control-request-private-network" in request.headers:
-        response = Response()
-        response.headers["Access-Control-Allow-Origin"] = request.headers.get("origin", "*")
-        response.headers["Access-Control-Allow-Private-Network"] = "true"
-        response.headers["Access-Control-Allow-Methods"] = "*"
-        response.headers["Access-Control-Allow-Headers"] = "*"
-        return response
+    if request.method == "OPTIONS":
+        if "access-control-request-private-network" in request.headers:
+            response = Response()
+            response.headers["Access-Control-Allow-Origin"] = request.headers.get("origin", "*")
+            response.headers["Access-Control-Allow-Private-Network"] = "true"
+            response.headers["Access-Control-Allow-Methods"] = "*"
+            response.headers["Access-Control-Allow-Headers"] = "*"
+            return response
     
     response = await call_next(request)
+    # Add Private Network Access support for the actual response
+    response.headers["Access-Control-Allow-Private-Network"] = "true"
     return response
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
-    allow_credentials=False,
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
