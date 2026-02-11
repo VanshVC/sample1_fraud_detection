@@ -9,7 +9,7 @@ from fastapi.middleware.cors import CORSMiddleware
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
-    allow_credentials=True,
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -23,6 +23,10 @@ app.include_router(visualizations.router, prefix="/api", tags=["Visualizations"]
 from app.db.database import engine, Base
 from app.db import models
 Base.metadata.create_all(bind=engine)
+
+@app.get("/")
+def read_root():
+    return {"message": "Fraud Detection API is running", "health": "ok"}
 
 @app.get("/ping")
 def health_check():

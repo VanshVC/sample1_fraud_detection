@@ -4,8 +4,8 @@ __pycache__/
 *$py.class
 .venv/
 .env
-*.pkl
-*.csv
+# *.pkl
+# *.csv
 
 # Node
 node_modules/
