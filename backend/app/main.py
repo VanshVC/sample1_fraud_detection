@@ -17,16 +17,16 @@ async def add_cors_private_network_header(request: Request, call_next):
             response.headers["Access-Control-Allow-Private-Network"] = "true"
             response.headers["Access-Control-Allow-Methods"] = "*"
             response.headers["Access-Control-Allow-Headers"] = "*"
+            response.headers["Access-Control-Allow-Credentials"] = "true"
             return response
     
     response = await call_next(request)
-    # Add Private Network Access support for the actual response
     response.headers["Access-Control-Allow-Private-Network"] = "true"
     return response
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origin_regex="https?://.*", # Allow all http/https origins
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

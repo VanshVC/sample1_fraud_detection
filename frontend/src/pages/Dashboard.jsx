@@ -12,8 +12,18 @@ const Dashboard = () => {
         setLoading(true);
         setError(null);
         setPrediction(null);
+
+        // Ensure numeric fields are numbers
+        const sanitizedData = {
+            ...data,
+            amount: parseFloat(data.amount),
+            time: parseInt(data.time),
+            age: parseInt(data.age),
+            previous_trans: parseInt(data.previous_trans)
+        };
+
         try {
-            const response = await predictFraud(data);
+            const response = await predictFraud(sanitizedData);
             setPrediction(response.data);
         } catch (err) {
             setError('Failed to analyze transaction. Please check the backend connection.');
