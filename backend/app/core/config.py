@@ -12,4 +12,13 @@ class Settings(BaseSettings):
     class Config:
         case_sensitive = True
 
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        # Fix for Render or other environments adding quotes or spaces
+        if self.DATABASE_URL:
+             self.DATABASE_URL = self.DATABASE_URL.strip().strip("'").strip('"')
+        # Fix for Supabase/Postgres returning postgres:// which SQLAlchemy 1.4+ dislikes
+        if self.DATABASE_URL and self.DATABASE_URL.startswith("postgres://"):
+            self.DATABASE_URL = self.DATABASE_URL.replace("postgres://", "postgresql://", 1)
+
 settings = Settings()
