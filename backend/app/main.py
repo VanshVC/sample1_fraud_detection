@@ -4,29 +4,11 @@ from app.routes import predict, analytics, visualizations
 
 app = FastAPI(title=settings.PROJECT_NAME, openapi_url=f"{settings.API_V1_STR}/openapi.json")
 
-# Allow CORS
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi import Request, Response
-
-@app.middleware("http")
-async def add_cors_private_network_header(request: Request, call_next):
-    if request.method == "OPTIONS":
-        if "access-control-request-private-network" in request.headers:
-            response = Response()
-            response.headers["Access-Control-Allow-Origin"] = request.headers.get("origin", "*")
-            response.headers["Access-Control-Allow-Private-Network"] = "true"
-            response.headers["Access-Control-Allow-Methods"] = "*"
-            response.headers["Access-Control-Allow-Headers"] = "*"
-            response.headers["Access-Control-Allow-Credentials"] = "true"
-            return response
-    
-    response = await call_next(request)
-    response.headers["Access-Control-Allow-Private-Network"] = "true"
-    return response
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origin_regex="https?://.*", # Allow all http/https origins
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
