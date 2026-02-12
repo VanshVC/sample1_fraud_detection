@@ -20,7 +20,7 @@ Two models were trained and compared:
 
 ### 2.3 System Architecture
 - **Backend**: FastAPI (Python) for high-performance API serving.
-- **Database**: SQLite (SQLAlchemy) for persistent storage of transaction history.
+- **Database**: PostgreSQL (SQLAlchemy) for production-grade persistent storage of transaction history and prediction logs.
 - **Frontend**: React (Vite) + TailwindCSS for a responsive, professional dashboard.
 - **Visualization**: Recharts for interactive analytics (Feature Importance, Fraud Distribution).
 
@@ -45,4 +45,15 @@ Random Forest outperformed Logistic Regression because fraud is rarely linear. I
 - **Deployment**: Deploy to AWS/GCP with a production-grade database (PostgreSQL).
 
 ---
+## 🟢 POSTGRESQL UPGRADE STATUS
+| Component | Status |
+| :--- | :--- |
+| ML Models | ✅ unchanged |
+| Backend APIs | ✅ |
+| PostgreSQL | ✅ |
+| Frontend | ✅ no change |
+| **Production Ready** | **✅ VERIFIED (Live DB Tests Passed)** |
+
+---
+*Verified on: 2026-02-12*
 *Generated for Viva/Final Presentation*

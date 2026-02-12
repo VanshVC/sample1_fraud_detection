@@ -1,37 +1,42 @@
-from fastapi import APIRouter
-import pandas as pd
+from fastapi import APIRouter, Depends
+from sqlalchemy.orm import Session
+from sqlalchemy import func
+from app.db.database import get_db
+from app.db import models
 import os
 import json
 
 router = APIRouter()
 
-# Paths (Ideally from config)
+# Paths
 BACKEND_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-DATA_PATH = os.path.join(BACKEND_DIR, "data", "credit_card_fraud.csv")
 METRICS_PATH = os.path.join(BACKEND_DIR, "evaluation", "metrics.json")
 
 @router.get("/analytics")
-def get_analytics():
+def get_analytics(db: Session = Depends(get_db)):
     """
-    Returns basic fraud statistics from the dataset.
+    Returns fraud statistics from the PostgreSQL database.
     """
     try:
-        if not os.path.exists(DATA_PATH):
-             return {"error": "Data file not found."}
-             
-        df = pd.read_csv(DATA_PATH)
-        total_transactions = len(df)
-        fraud_cases = df[df['is_fraud'] == 1]
-        fraud_count = len(fraud_cases)
-        fraud_percentage = (fraud_count / total_transactions) * 100
+        # Total transactions recorded
+        total_transactions = db.query(models.Transaction).count()
         
-        avg_fraud_amount = fraud_cases['amount'].mean() if fraud_count > 0 else 0
+        # Fraud cases (based on system predictions)
+        fraud_count = db.query(models.Prediction).filter(models.Prediction.predicted_label == True).count()
         
+        fraud_percentage = (fraud_count / total_transactions * 100) if total_transactions > 0 else 0
+        
+        # Average amount of transactions flagged as fraud
+        avg_fraud_amount = db.query(func.avg(models.Transaction.amount))\
+            .join(models.Prediction, models.Transaction.id == models.Prediction.transaction_id)\
+            .filter(models.Prediction.predicted_label == True)\
+            .scalar() or 0
+            
         return {
             "total_transactions": total_transactions,
             "fraud_count": fraud_count,
             "fraud_percentage": round(fraud_percentage, 2),
-            "avg_fraud_amount": round(avg_fraud_amount, 2)
+            "avg_fraud_amount": round(float(avg_fraud_amount), 2)
         }
     except Exception as e:
         return {"error": str(e)}

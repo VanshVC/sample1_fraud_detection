@@ -8,26 +8,26 @@ class Transaction(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     amount = Column(Float, nullable=False)
-    time = Column(Integer, nullable=False)
+    time = Column(Integer, nullable=False) # Step of the simulation
     category = Column(String, nullable=False)
     age = Column(Integer, nullable=False)
     location = Column(String, nullable=False)
     previous_trans = Column(Integer, nullable=False)
+    is_fraud = Column(Boolean, default=False) # Ground truth
     timestamp = Column(DateTime(timezone=True), server_default=func.now())
     
-    prediction = relationship("Prediction", back_populates="transaction", uselist=False)
+    predictions = relationship("Prediction", back_populates="transaction")
 
 class Prediction(Base):
     __tablename__ = "predictions"
 
     id = Column(Integer, primary_key=True, index=True)
     transaction_id = Column(Integer, ForeignKey("transactions.id"))
-    is_fraud = Column(Boolean, nullable=False)
+    predicted_label = Column(Boolean, nullable=False) # 0 or 1
     probability = Column(Float, nullable=False)
-    model_used = Column(String, nullable=False)
-    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    timestamp = Column(DateTime(timezone=True), server_default=func.now())
 
-    transaction = relationship("Transaction", back_populates="prediction")
+    transaction = relationship("Transaction", back_populates="predictions")
 
 class ModelMetrics(Base):
     __tablename__ = "model_metrics"

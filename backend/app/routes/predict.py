@@ -20,7 +20,7 @@ def predict(transaction: TransactionBase, model: str = "rf", db: Session = Depen
         result = inference.predict(data, model_type=model)
         
         # 2. Save to Database
-        # Save Transaction
+        # Save Transaction (is_fraud defaults to False/Unknown for new live transactions)
         db_transaction = Transaction(
             amount=transaction.amount,
             time=transaction.time,
@@ -36,9 +36,9 @@ def predict(transaction: TransactionBase, model: str = "rf", db: Session = Depen
         # Save Prediction
         db_prediction = Prediction(
             transaction_id=db_transaction.id,
-            is_fraud=result["is_fraud"],
-            probability=result["probability"],
-            model_used=result["model_used"]
+            predicted_label=result["is_fraud"], # Map result to 'predicted_label'
+            probability=result["probability"]
+            # model_used column was removed from Prediction table schema coverage
         )
         db.add(db_prediction)
         db.commit()
