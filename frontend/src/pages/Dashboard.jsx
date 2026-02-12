@@ -26,8 +26,21 @@ const Dashboard = () => {
             const response = await predictFraud(sanitizedData);
             setPrediction(response.data);
         } catch (err) {
-            setError('Failed to analyze transaction. Please check the backend connection.');
-            console.error(err);
+            console.error("Prediction Error:", err);
+            let errorMessage = 'Failed to analyze transaction.';
+
+            if (err.response) {
+                // Server responded with a status code outside 2xx
+                errorMessage += ` Server error: ${err.response.status} - ${err.response.data?.detail || err.response.statusText}`;
+            } else if (err.request) {
+                // Request was made but no response received
+                errorMessage += ' No response from backend. Check if the server is running.';
+            } else {
+                // Something else caused the error
+                errorMessage += ` Error: ${err.message}`;
+            }
+
+            setError(errorMessage);
         } finally {
             setLoading(false);
         }
