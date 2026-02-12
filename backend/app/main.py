@@ -6,9 +6,18 @@ app = FastAPI(title=settings.PROJECT_NAME, openapi_url=f"{settings.API_V1_STR}/o
 
 from fastapi.middleware.cors import CORSMiddleware
 
+
+origins = [
+    "http://localhost",
+    "http://localhost:3000",
+    "http://localhost:5173",
+    "https://sample1-fraud-detection.vercel.app",
+    "https://sample1-fraud-detection-1.onrender.com",
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
