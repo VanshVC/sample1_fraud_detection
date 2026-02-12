@@ -18,6 +18,7 @@ const Navbar = () => {
                     <div className="flex items-center space-x-2">
                         <NavLink to="/" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`} end>Dashboard</NavLink>
                         <NavLink to="/analytics" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>Analytics</NavLink>
+                        <NavLink to="/analysis" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>Model Analysis</NavLink>
                         <a
                             href="https://colab.research.google.com/drive/1v3tsCahr9NsHw5C7ewUGU1N3qMRPl1ke"
                             target="_blank"
